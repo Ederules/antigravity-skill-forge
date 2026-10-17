@@ -1,0 +1,35 @@
+{
+  "name": "antigravity-skill-forge",
+  "version": "2.0.0",
+  "description": "Open-source engine to supercharge Google Antigravity with 2,530+ production-grade skills, 10 Master Super-Hubs, and 5 Autonomous Subagents using a zero-bloat Progressive Disclosure architecture.",
+  "type": "module",
+  "bin": {
+    "skill-forge": "./bin/skill-forge.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "bootstrap": "node bin/skill-forge.js bootstrap",
+    "start": "node src/server.js",
+    "stats": "node bin/skill-forge.js stats",
+    "cli": "node bin/skill-forge.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": [
+    "antigravity",
+    "gemini",
+    "mcp",
+    "ai-agents",
+    "progressive-disclosure",
+    "skills",
+    "developer-tools"
+  ],
+  "author": "Ederules",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ederules/antigravity-skill-forge.git"
+  },
+  "homepage": "https://github.com/Ederules/antigravity-skill-forge#readme"
+}

@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antigravity Skill Forge — Command Center</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --surface: #131b2e;
+      --surface-hover: #1c2742;
+      --border: #263354;
+      --primary: #38bdf8;
+      --primary-dark: #0284c7;
+      --accent: #a855f7;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 4rem;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+    }
+
+    .header-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #38bdf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Telemetry Ribbon */
+    .telemetry-grid {
+      max-width: 1360px;
+      margin: 1.5rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .stat-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #090d16;
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--success), var(--primary));
+      transition: width 0.4s ease;
+    }
+
+    /* Navigation Tabs */
+    .tabs-bar {
+      max-width: 1360px;
+      margin: 0 auto 1.5rem;
+      padding: 0 2rem;
+      display: flex;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+
+    .tab-btn {
+      background: var(--surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.15rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+      border-color: var(--primary);
+    }
+
+    .tab-btn.active {
+      background: var(--primary-dark);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Hub Filter Pills */
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hub-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hub-pill:hover, .hub-pill.active {
+      border-color: var(--primary);
+      background: var(--surface-hover);
+    }
+
+    .hub-pill-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+
+    .hub-pill-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Search Bar */
+    .search-toolbar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    input[type="text"], input[type="search"], select, textarea {
+      background: #090d16;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      width: 100%;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid var(--primary);
+      border-color: transparent;
+    }
+
+    .search-input-wrap {
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .btn {
+      background: var(--primary-dark);
+      color: #fff;
+      border: none;
+      padding: 0.7rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.92;
+    }
+
+    .btn-secondary {
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+    }
+
+    .btn-accent {
+      background: linear-gradient(90deg, #7e22ce, #0284c7);
+    }
+
+    /* Runbook Cards List */
+    .runbooks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 0.9rem;
+    }
+
+    .runbook-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.65rem;
+    }
+
+    /* Deferred rendering for below-the-fold cards */
+    .runbook-card.deferred-card {
+      content-visibility: auto;
+      contain-intrinsic-size: auto none auto 105px;
+    }
+
+    .runbook-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+
+    .runbook-title {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: var(--text);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 99px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+    }
+
+    .badge-purple {
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+    }
+
+    /* Two-column layout for Adapter */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .split-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .panel-box h2 {
+      font-size: 1.15rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    pre {
+      background: #070a12;
+      border: 1px solid var(--border);
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.84rem;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 460px;
+    }
+
+    /* Native Modal Dialog with Overscroll Containment */
+    dialog {
+      margin: auto;
+      width: min(900px, 92vw);
+      max-height: 85vh;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--primary);
+      border-radius: var(--radius);
+      padding: 0;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+    }
+
+    dialog:modal {
+      overscroll-behavior: contain;
+    }
+
+    dialog::backdrop {
+      background-color: rgba(5, 8, 17, 0.78);
+      backdrop-filter: blur(3px);
+      overflow: hidden;
+      overscroll-behavior: contain;
+    }
+
+    .modal-header {
+      padding: 1.1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <h1>⚡ Antigravity Skill Forge — Command Center</h1>
+        <p>Hierarchical Super-Hub Architecture, Implicit Trigger Adapter &amp; Live Token Budget Telemetry</p>
+      </div>
+      <div>
+        <button class="btn btn-secondary" onclick="refreshAll()">🔄 Sync Telemetry</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Live Telemetry Ribbon -->
+  <section class="telemetry-grid" aria-label="System Telemetry">
+    <div class="stat-card">
+      <div class="stat-label">Global System Token Budget</div>
+      <div class="stat-value">
+        <span id="tokenUsed">...</span>
+        <span style="font-size: 0.95rem; color: var(--text-muted);">/ 20,000</span>
+      </div>
+      <div class="progress-bar">
+        <div id="tokenBar" class="progress-fill" style="width: 12%;"></div>
+      </div>
+      <div id="tokenPct" class="stat-sub">Calculating token footprint...</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Active Specialized Runbooks</div>
+      <div class="stat-value" id="totalRunbooks" style="color: var(--primary);">...</div>
+      <div class="stat-sub">Progressive Disclosure (0 tokens at rest)</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Master Super-Hubs</div>
+      <div class="stat-value" id="totalHubs" style="color: #c084fc;">10</div>
+      <div class="stat-sub">Every SKILL.md &lt; 2.5 KB (24 KB ceiling)</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Elite Subagents &amp; Security Shield</div>
+      <div class="stat-value" id="subagentCount" style="color: var(--success);">...</div>
+      <div class="stat-sub">Prompt-Injection &amp; RCE Shield Active</div>
+    </div>
+  </section>
+
+  <!-- Navigation Tabs -->
+  <nav class="tabs-bar" aria-label="Primary Navigation">
+    <button class="tab-btn active" onclick="switchTab('explorer', this)">🧭 2,530+ Skill Explorer</button>
+    <button class="tab-btn" onclick="switchTab('converter', this)">⚗️ Universal Adapter &amp; Hub Injector</button>
+    <button class="tab-btn" onclick="switchTab('agents', this)">🤖 Autonomous Subagents &amp; MCPs</button>
+  </nav>
+
+  <main class="container">
+    <!-- TAB 1: EXPLORER -->
+    <section id="tab-explorer" class="tab-panel active">
+      <div class="hub-grid" id="hubPillsContainer"></div>
+
+      <div class="search-toolbar">
+        <div class="search-input-wrap">
+          <input type="search" id="searchInput" placeholder="Search across 2,530+ runbooks (e.g. postgres, nextjs, owasp, playwright, seo, rag, docker, kubernetes)..." oninput="debouncedSearch()" />
+        </div>
+        <button class="btn btn-secondary" onclick="resetFilter()">Reset Filter</button>
+      </div>
+
+      <div style="margin-bottom: 0.85rem; color: var(--text-muted); font-size: 0.88rem;" id="searchStatus">
+        Loading runbook catalog...
+      </div>
+
+      <div class="runbooks-grid" id="runbooksContainer"></div>
+    </section>
+
+    <!-- TAB 2: CONVERTER & HUB INJECTOR -->
+    <section id="tab-converter" class="tab-panel">
+      <div class="split-grid">
+        <div class="panel-box">
+          <h2>Import Skill from Claude, Cursor, or OpenAI Codex</h2>
+          <div class="form-group">
+            <label for="skillUrl">GitHub URL (.md, .mdc, or .cursorrules file)</label>
+            <input type="text" id="skillUrl" placeholder="https://github.com/owner/repo/blob/main/SKILL.md" />
+          </div>
+          <div class="form-group">
+            <label for="skillName">Custom Skill Identifier (optional)</label>
+            <input type="text" id="skillName" placeholder="e.g. rust-tokio-concurrency" />
+          </div>
+          <div class="form-group">
+            <label for="skillRaw">Or paste raw prompt / markdown instructions directly</label>
+            <textarea id="skillRaw" rows="9" placeholder="You are an expert Kubernetes architect. Always validate Helm charts..."></textarea>
+          </div>
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <button class="btn" onclick="previewConversion()">🔍 Preview Adaptation</button>
+            <button class="btn btn-accent" onclick="injectIntoSuperHub()">🚀 Inject into Super-Hub (0 Extra Tokens)</button>
+            <button class="btn btn-secondary" onclick="installStandalone()">📦 Install Standalone</button>
+          </div>
+          <div id="convertFeedback" style="margin-top: 0.85rem; font-size: 0.88rem;"></div>
+        </div>
+
+        <div class="panel-box">
+          <h2>Antigravity Adapted &amp; Sanitized Output</h2>
+          <p style="font-size: 0.83rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Implicit 3rd-person triggers synthesized + Security Shield sanitization applied:
+          </p>
+          <pre id="previewBox">Use the left panel to convert and preview any external skill or prompt.</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: SUBAGENTS & MCP -->
+    <section id="tab-agents" class="tab-panel">
+      <div class="split-grid">
+        <div class="panel-box">
+          <h2>🤖 Registered Autonomous Elite Subagents</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Active in <code>~/.gemini/config/plugins/antigravity-elite-agents</code>:
+          </p>
+          <div id="subagentsList" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+        </div>
+
+        <div class="panel-box">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2 style="margin: 0;">🔌 Configured MCP Servers</h2>
+            <button class="btn btn-secondary" onclick="loadMcpServers()">Refresh MCP List</button>
+          </div>
+          <div id="mcpList" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Native Modal Dialog for Runbook Inspection -->
+  <dialog id="runbookModal" closedby="any" aria-labelledby="modalTitle">
+    <div class="modal-header">
+      <div>
+        <span id="modalHubBadge" class="badge">Hub</span>
+        <h3 id="modalTitle" style="margin-top: 0.25rem; font-size: 1.15rem;">Runbook Title</h3>
+      </div>
+      <form method="dialog">
+        <button type="submit" class="btn btn-secondary">Close (Esc)</button>
+      </form>
+    </div>
+    <div class="modal-body">
+      <pre id="modalContent">Loading runbook content...</pre>
+    </div>
+  </dialog>
+
+  <script>
+    let activeHubFilter = '';
+    let searchTimer = null;
+
+    // Fallback for browsers without declarative <dialog closedby="any"> support
+    const runbookDialog = document.getElementById('runbookModal');
+    if (!('closedBy' in HTMLDialogElement.prototype)) {
+      runbookDialog.addEventListener('click', (event) => {
+        if (event.target !== runbookDialog) return;
+        const rect = runbookDialog.getBoundingClientRect();
+        const isDialogContent = (
+          rect.top <= event.clientY &&
+          event.clientY <= rect.top + rect.height &&
+          rect.left <= event.clientX &&
+          event.clientX <= rect.left + rect.width
+        );
+        if (isDialogContent) return;
+        runbookDialog.close();
+      });
+    }
+
+    function switchTab(tabId, btnEl) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+      btnEl.classList.add('active');
+    }
+
+    async function loadStats() {
+      const res = await fetch('/api/stats');
+      const data = await res.json();
+
+      document.getElementById('tokenUsed').textContent = data.tokenBudget.used.toLocaleString();
+      document.getElementById('tokenBar').style.width = Math.min(data.tokenBudget.percentage, 100) + '%';
+      document.getElementById('tokenPct').textContent =
+        `${data.tokenBudget.percentage}% used (${(100 - data.tokenBudget.percentage).toFixed(1)}% free budget)`;
+
+      document.getElementById('totalRunbooks').textContent = data.totalRunbooks.toLocaleString();
+      document.getElementById('totalHubs').textContent = data.hubs.length;
+      document.getElementById('subagentCount').textContent = `${data.subagents.length} Elite Agents`;
+
+      // Render Hub Filter Pills
+      const pillsHtml = data.hubs.map(h => `
+        <button class="hub-pill ${activeHubFilter === h.id ? 'active' : ''}" onclick="filterByHub('${h.id}')">
+          <div class="hub-pill-title">${h.title}</div>
+          <div class="hub-pill-meta">
+            <span>${h.id.replace('hub-', '')}</span>
+            <span>${h.runbookCount} skills</span>
+          </div>
+        </button>
+      `).join('');
+      document.getElementById('hubPillsContainer').innerHTML = pillsHtml;
+
+      // Render Subagents
+      document.getElementById('subagentsList').innerHTML = data.subagents.map(ag => `
+        <div style="padding: 0.9rem; background: #090d16; border: 1px solid var(--border); border-radius: 8px;">
+          <div style="font-weight: 700; color: var(--primary);">@${ag.id}</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">${ag.description}</div>
+        </div>
+      `).join('');
+    }
+
+    async function searchCatalog() {
+      const q = document.getElementById('searchInput').value.trim();
+      const url = `/api/runbooks?q=${encodeURIComponent(q)}&hub=${encodeURIComponent(activeHubFilter)}&limit=180`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      const hubText = activeHubFilter ? ` in ${activeHubFilter}` : ' across all 10 Super-Hubs';
+      document.getElementById('searchStatus').textContent =
+        `Showing ${data.results.length} matching runbooks${hubText}:`;
+
+      const cardsHtml = data.results.map((item, idx) => `
+        <article class="runbook-card ${idx >= 12 ? 'deferred-card' : ''}" onclick="openRunbook('${item.hubId}', '${item.file}')">
+          <div>
+            <div style="display: flex; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.4rem;">
+              <span class="badge">${item.hubId.replace('hub-', '')}</span>
+              <span class="badge badge-purple">${item.source}</span>
+            </div>
+            <div class="runbook-title">${item.title}</div>
+          </div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); font-family: monospace;">
+            references/${item.file}
+          </div>
+        </article>
+      `).join('');
+
+      document.getElementById('runbooksContainer').innerHTML = cardsHtml;
+    }
+
+    function debouncedSearch() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(searchCatalog, 200);
+    }
+
+    function filterByHub(hubId) {
+      activeHubFilter = activeHubFilter === hubId ? '' : hubId;
+      loadStats();
+      searchCatalog();
+    }
+
+    function resetFilter() {
+      activeHubFilter = '';
+      document.getElementById('searchInput').value = '';
+      loadStats();
+      searchCatalog();
+    }
+
+    async function openRunbook(hubId, file) {
+      document.getElementById('modalHubBadge').textContent = hubId;
+      document.getElementById('modalTitle').textContent = file;
+      document.getElementById('modalContent').textContent = 'Loading runbook...';
+      runbookDialog.showModal();
+
+      const res = await fetch(`/api/runbook?hub=${encodeURIComponent(hubId)}&file=${encodeURIComponent(file)}`);
+      const data = await res.json();
+      if (data.content) {
+        document.getElementById('modalTitle').textContent = `${file} (${(data.sizeBytes / 1024).toFixed(1)} KB)`;
+        document.getElementById('modalContent').textContent = data.content;
+      } else {
+        document.getElementById('modalContent').textContent = data.error || 'Failed to load runbook.';
+      }
+    }
+
+    async function previewConversion() {
+      const url = document.getElementById('skillUrl').value.trim();
+      const name = document.getElementById('skillName').value.trim();
+      const content = document.getElementById('skillRaw').value.trim();
+
+      const res = await fetch('/api/convert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, name, content })
+      });
+      const data = await res.json();
+      if (data.content) {
+        document.getElementById('previewBox').textContent = data.content;
+        document.getElementById('convertFeedback').innerHTML =
+          `<span style="color: var(--primary);">✓ Preview ready (${data.byteLength} bytes).</span>`;
+      } else {
+        document.getElementById('convertFeedback').innerHTML =
+          `<span style="color: var(--danger);">❌ ${data.error}</span>`;
+      }
+    }
+
+    async function injectIntoSuperHub() {
+      const url = document.getElementById('skillUrl').value.trim();
+      const name = document.getElementById('skillName').value.trim();
+      const content = document.getElementById('skillRaw').value.trim();
+
+      const res = await fetch('/api/inject-hub', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, name, content })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('convertFeedback').innerHTML =
+          `<span style="color: var(--success);">✅ Injected into <strong>${data.hubId}</strong> as <code>references/${data.file}</code> (0 global tokens added).</span>`;
+        refreshAll();
+      } else {
+        document.getElementById('convertFeedback').innerHTML =
+          `<span style="color: var(--danger);">❌ ${data.error}</span>`;
+      }
+    }
+
+    async function installStandalone() {
+      const name = document.getElementById('skillName').value.trim();
+      const content = document.getElementById('skillRaw').value.trim();
+      const res = await fetch('/api/install', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, content })
+      });
+      const data = await res.json();
+      if (data.installedPath) {
+        document.getElementById('convertFeedback').innerHTML =
+          `<span style="color: var(--success);">✅ Installed standalone skill at ${data.installedPath}</span>`;
+        refreshAll();
+      } else {
+        document.getElementById('convertFeedback').innerHTML =
+          `<span style="color: var(--danger);">❌ ${data.error}</span>`;
+      }
+    }
+
+    async function loadMcpServers() {
+      const res = await fetch('/api/mcp');
+      const data = await res.json();
+      const container = document.getElementById('mcpList');
+      container.innerHTML = data.servers.map(s => `
+        <div style="padding: 0.9rem; background: #090d16; border: 1px solid var(--border); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: 700; color: var(--text);">${s.id}</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); font-family: monospace;">${s.command} ${(s.args || []).join(' ')}</div>
+          </div>
+          <span class="badge" style="background: rgba(34, 197, 94, 0.15); color: var(--success);">CONFIGURED</span>
+        </div>
+      `).join('');
+    }
+
+    function refreshAll() {
+      loadStats();
+      searchCatalog();
+      loadMcpServers();
+    }
+
+    refreshAll();
+  </script>
+</body>
+</html>
